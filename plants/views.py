@@ -108,3 +108,39 @@ def reminder_create(request, plant_id=None):
         'title': 'Создать напоминание',
         'button_text': 'Создать',
     })
+
+@login_required
+def reminder_list(request):
+    reminders = Reminder.objects.filter(user=request.user).order_by('reminder_date', 'reminder_time')
+    return render(request, 'plants/reminder_list.html', {'reminders': reminders})
+
+
+@login_required
+def reminder_edit(request, pk):
+    reminder = get_object_or_404(Reminder, pk=pk, user=request.user)
+    
+    if request.method == 'POST':
+        form = ReminderForm(request.POST, instance=reminder, user=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Напоминание обновлено!')
+            return redirect('plants:reminder_list')
+    else:
+        form = ReminderForm(instance=reminder, user=request.user)
+    
+    return render(request, 'plants/reminder_form.html', {
+        'form': form,
+        'plant': reminder.plant,
+        'title': 'Редактировать напоминание',
+        'button_text': 'Сохранить',
+    })
+
+
+@login_required
+def reminder_delete(request, pk):
+    reminder = get_object_or_404(Reminder, pk=pk, user=request.user)
+    if request.method == 'POST':
+        reminder.delete()
+        messages.success(request, 'Напоминание удалено!')
+        return redirect('plants:reminder_list')
+    return render(request, 'plants/reminder_confirm_delete.html', {'reminder': reminder})

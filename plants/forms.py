@@ -46,14 +46,15 @@ class ReminderForm(forms.ModelForm):
     class Meta:
         model = Reminder
         fields = ['plant', 'action_type', 'custom_action_name', 'frequency', 
-                  'interval_days', 'next_reminder_date', 'notes']
+                  'interval_days', 'reminder_date', 'reminder_time', 'notes']
         widgets = {
             'plant': forms.Select(attrs={'class': 'form-select'}),
             'action_type': forms.Select(attrs={'class': 'form-select'}),
             'custom_action_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Своё действие'}),
             'frequency': forms.Select(attrs={'class': 'form-select'}),
             'interval_days': forms.NumberInput(attrs={'class': 'form-control', 'min': 1}),
-            'next_reminder_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'reminder_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'reminder_time': forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
             'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
         }
     

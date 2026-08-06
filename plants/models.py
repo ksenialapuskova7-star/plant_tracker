@@ -140,8 +140,12 @@ class Reminder(models.Model):
         default=1,
         verbose_name="Интервал (дни)"
     )
-    next_reminder_date = models.DateField(
-        verbose_name="Дата следующего напоминания"
+    reminder_date = models.DateField(
+        verbose_name="Дата напоминания"
+    )
+    reminder_time = models.TimeField(
+        default='09:00',
+        verbose_name="Время напоминания"
     )
     is_active = models.BooleanField(
         default=True,
@@ -158,8 +162,8 @@ class Reminder(models.Model):
     class Meta:
         verbose_name = "Напоминание"
         verbose_name_plural = "Напоминания"
-        ordering = ['next_reminder_date']
+        ordering = ['reminder_date', 'reminder_time']
 
     def __str__(self):
         action = self.custom_action_name or self.get_action_type_display()
-        return f"{self.plant.name} — {action} ({self.next_reminder_date})"
+        return f"{self.plant.name} — {action} ({self.reminder_date} {self.reminder_time})"
