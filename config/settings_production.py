@@ -25,9 +25,9 @@ SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
-# Celery
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+# Вместо Redis используем SQLite для хранения задач
+CELERY_BROKER_URL = 'sqla+sqlite:///celery.sqlite'
+CELERY_RESULT_BACKEND = 'db+sqlite:///celery.sqlite'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
