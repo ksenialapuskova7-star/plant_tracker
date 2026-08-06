@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Удалить растение{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm border-danger">
+            <div class="card-header bg-danger text-white">
+                <h4>⚠️ Подтверждение удаления</h4>
+            </div>
+            <div class="card-body">
+                <p class="fs-5">Вы уверены, что хотите удалить растение?</p>
+                <p class="fw-bold">{{ plant.name }}</p>
+                {% if plant.photo %}
+                    <img src="{{ plant.photo.url }}" style="height: 100px; width: auto;">
+                {% endif %}
+                <form method="post" class="mt-3">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Удалить
+                    </button>
+                    <a href="{% url 'plants:detail' plant.pk %}" class="btn btn-secondary">Отмена</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

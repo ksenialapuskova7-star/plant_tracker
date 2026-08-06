@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Мои растения{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>🌿 Мои растения</h2>
+    <a href="{% url 'plants:create' %}" class="btn btn-success">
+        <i class="bi bi-plus-circle"></i> Добавить растение
+    </a>
+</div>
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for plant in plants %}
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                {% if plant.photo %}
+                    <img src="{{ plant.photo.url }}" class="card-img-top" style="height: 200px; object-fit: cover;">
+                {% else %}
+                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                        <span class="display-1 text-muted">🌱</span>
+                    </div>
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ plant.name }}</h5>
+                    {% if plant.scientific_name %}
+                        <p class="card-text text-muted small">{{ plant.scientific_name }}</p>
+                    {% endif %}
+                    <span class="badge bg-{% if plant.health_status == 'healthy' %}success{% elif plant.health_status == 'needs_water' %}warning{% elif plant.health_status == 'sick' %}danger{% else %}secondary{% endif %}">
+                        {{ plant.get_health_status_display }}
+                    </span>
+                    <p class="card-text mt-2 small">
+                        <i class="bi bi-geo-alt"></i> {{ plant.location|default:"Не указано" }}
+                    </p>
+                </div>
+                <div class="card-footer bg-transparent d-flex justify-content-between">
+                    <a href="{% url 'plants:detail' plant.pk %}" class="btn btn-sm btn-primary">Подробнее</a>
+                    <div>
+                        <a href="{% url 'plants:edit' plant.pk %}" class="btn btn-sm btn-outline-secondary">✏️</a>
+                        <a href="{% url 'plants:delete' plant.pk %}" class="btn btn-sm btn-outline-danger">🗑️</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12 text-center py-5">
+            <span class="display-1">🌱</span>
+            <h3>У вас пока нет растений</h3>
+            <p class="text-muted">Добавьте первое растение в вашу коллекцию!</p>
+            <a href="{% url 'plants:create' %}" class="btn btn-success">Добавить растение</a>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

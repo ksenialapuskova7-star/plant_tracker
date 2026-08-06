@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ plant.name }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            {% if plant.photo %}
+                <img src="{{ plant.photo.url }}" class="card-img-top" style="height: 300px; object-fit: cover;">
+            {% else %}
+                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 300px;">
+                    <span class="display-1 text-muted">🌱</span>
+                </div>
+            {% endif %}
+            <div class="card-body">
+                <h3>{{ plant.name }}</h3>
+                <p class="text-muted"><em>{{ plant.scientific_name|default:"" }}</em></p>
+                <span class="badge bg-{% if plant.health_status == 'healthy' %}success{% elif plant.health_status == 'needs_water' %}warning{% elif plant.health_status == 'sick' %}danger{% else %}secondary{% endif %} fs-6">
+                    {{ plant.get_health_status_display }}
+                </span>
+                <hr>
+                <p><i class="bi bi-geo-alt"></i> {{ plant.location|default:"Местоположение не указано" }}</p>
+                <p><i class="bi bi-lightbulb"></i> {{ plant.get_light_preference_display }}</p>
+                <p><i class="bi bi-droplet"></i> {{ plant.get_watering_frequency_display }}</p>
+                {% if plant.watering_volume %}
+                    <p><i class="bi bi-water"></i> {{ plant.watering_volume }} мл воды</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5>📋 Подробная информация</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>🌡️ Температура:</strong> 
+                            {% if plant.temperature_min and plant.temperature_max %}
+                                {{ plant.temperature_min }}–{{ plant.temperature_max }}°C
+                            {% else %}
+                                Не указано
+                            {% endif %}
+                        </p>
+                        <p><strong>💧 Влажность:</strong> 
+                            {{ plant.humidity_preference|default:"Не указано" }}%
+                        </p>
+                        <p><strong>💨 Опрыскивание:</strong> 
+                            {% if plant.needs_misting %}✅ Да{% else %}❌ Нет{% endif %}
+                        </p>
+                        <p><strong>☠️ Токсичность:</strong> 
+                            {% if plant.is_toxic %}⚠️ Токсично{% else %}Безопасно{% endif %}
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>🧪 Удобрение:</strong> 
+                            {{ plant.fertilizer_frequency|default:"Не указано" }} дней
+                        </p>
+                        <p><strong>🔄 Пересадка:</strong> 
+                            {{ plant.repot_frequency|default:"Не указано" }} дней
+                        </p>
+                        {% if plant.dormant_period_start and plant.dormant_period_end %}
+                            <p><strong>💤 Период покоя:</strong> 
+                                {{ plant.dormant_period_start }} — {{ plant.dormant_period_end }}
+                            </p>
+                        {% endif %}
+                        <p><strong>📅 Последний полив:</strong> 
+                            {{ plant.last_watered|default:"Не указано" }}
+                        </p>
+                    </div>
+                </div>
+                {% if plant.notes %}
+                    <hr>
+                    <p><strong>📝 Заметки:</strong></p>
+                    <p class="text-muted">{{ plant.notes }}</p>
+                {% endif %}
+            </div>
+            <div class="card-footer d-flex gap-2">
+                <a href="{% url 'plants:edit' plant.pk %}" class="btn btn-primary">✏️ Редактировать</a>
+                <a href="{% url 'plants:add_care' plant.pk %}" class="btn btn-success">➕ Добавить уход</a>
+                <a href="{% url 'plants:delete' plant.pk %}" class="btn btn-danger ms-auto">🗑️ Удалить</a>
+            </div>
+        </div>
+        
+        <div class="card shadow-sm mt-3">
+            <div class="card-header">
+                <h5>📖 Журнал ухода</h5>
+            </div>
+            <div class="card-body">
+                {% if care_logs %}
+                    <ul class="list-group list-group-flush">
+                        {% for log in care_logs %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>
+                                    <span class="badge bg-secondary">{{ log.get_action_type_display }}</span>
+                                    {{ log.date }}
+                                </span>
+                                {% if log.notes %}
+                                    <span class="text-muted small">{{ log.notes }}</span>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted">Журнал ухода пуст.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
