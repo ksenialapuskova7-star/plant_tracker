@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Plant, CareLog
-from .forms import PlantForm, CareLogForm
+from .models import Plant, CareLog, Reminder
+from .forms import PlantForm, CareLogForm, ReminderForm
 
 
 @login_required
@@ -80,3 +80,31 @@ def add_care(request, pk):
     else:
         form = CareLogForm()
     return render(request, 'plants/add_care.html', {'form': form, 'plant': plant})
+
+@login_required
+def reminder_create(request, plant_id=None):
+    if plant_id:
+        plant = get_object_or_404(Plant, pk=plant_id, user=request.user)
+    else:
+        plant = None
+    
+    if request.method == 'POST':
+        form = ReminderForm(request.POST, user=request.user)
+        if form.is_valid():
+            reminder = form.save(commit=False)
+            reminder.user = request.user
+            reminder.save()
+            messages.success(request, 'Напоминание создано!')
+            return redirect('plants:detail', pk=reminder.plant.pk)
+    else:
+        initial = {}
+        if plant:
+            initial['plant'] = plant
+        form = ReminderForm(user=request.user, initial=initial)
+    
+    return render(request, 'plants/reminder_form.html', {
+        'form': form,
+        'plant': plant,
+        'title': 'Создать напоминание',
+        'button_text': 'Создать',
+    })

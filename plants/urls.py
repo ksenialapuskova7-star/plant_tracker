@@ -11,5 +11,5 @@ urlpatterns = [
     path('<int:pk>/delete/', views.plant_delete, name='delete'),
     path('<int:pk>/add-care/', views.add_care, name='add_care'),
     path('reminder/<int:plant_id>/create/', views.reminder_create, name='reminder_create'),
-path('reminder/create/', views.reminder_create, name='reminder_create'),
+    path('reminder/create/', views.reminder_create, name='reminder_create'),
 ]
