@@ -78,9 +78,10 @@
                     <p class="text-muted">{{ plant.notes }}</p>
                 {% endif %}
             </div>
-            <div class="card-footer d-flex gap-2">
+            <div class="card-footer d-flex gap-2 flex-wrap">
                 <a href="{% url 'plants:edit' plant.pk %}" class="btn btn-primary">✏️ Редактировать</a>
                 <a href="{% url 'plants:add_care' plant.pk %}" class="btn btn-success">➕ Добавить уход</a>
+                <a href="{% url 'plants:reminder_create' plant.pk %}" class="btn btn-warning">🔔 Напоминание</a>
                 <a href="{% url 'plants:delete' plant.pk %}" class="btn btn-danger ms-auto">🗑️ Удалить</a>
             </div>
         </div>

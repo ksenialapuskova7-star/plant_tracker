@@ -1,5 +1,6 @@
 from django import forms
-from .models import Plant, CareLog
+from .models import Plant, CareLog, Reminder
+
 
 
 class PlantForm(forms.ModelForm):
@@ -40,3 +41,24 @@ class CareLogForm(forms.ModelForm):
             'action_type': forms.Select(attrs={'class': 'form-select'}),
             'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
         }
+
+class ReminderForm(forms.ModelForm):
+    class Meta:
+        model = Reminder
+        fields = ['plant', 'action_type', 'custom_action_name', 'frequency', 
+                  'interval_days', 'next_reminder_date', 'notes']
+        widgets = {
+            'plant': forms.Select(attrs={'class': 'form-select'}),
+            'action_type': forms.Select(attrs={'class': 'form-select'}),
+            'custom_action_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Своё действие'}),
+            'frequency': forms.Select(attrs={'class': 'form-select'}),
+            'interval_days': forms.NumberInput(attrs={'class': 'form-control', 'min': 1}),
+            'next_reminder_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
+        }
+    
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        if user:
+            self.fields['plant'].queryset = Plant.objects.filter(user=user)

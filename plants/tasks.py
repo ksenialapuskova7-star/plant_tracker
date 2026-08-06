@@ -6,44 +6,36 @@ import requests
 
 @shared_task
 def send_reminders():
-    from .models import Plant
+    from .models import Reminder
     
     today = timezone.now().date()
-    plants = Plant.objects.all()
+    reminders = Reminder.objects.filter(
+        is_active=True,
+        next_reminder_date__lte=today
+    )
     
-    frequency_map = {
-        'daily': 1,
-        'every_2_days': 2,
-        'every_3_days': 3,
-        'weekly': 7,
-        'every_2_weeks': 14,
-        'monthly': 30,
-    }
-    
-    for plant in plants:
-        messages = []
+    for reminder in reminders:
+        action = reminder.custom_action_name or reminder.get_action_type_display()
+        text = f"🌿 {reminder.plant.name}\n📋 Действие: {action}\n📅 Дата: {today}"
         
-        if plant.last_watered:
-            days = (today - plant.last_watered).days
-            interval = frequency_map.get(plant.watering_frequency, 7)
-            if days >= interval:
-                messages.append(f"💧 Полив! Прошло {days} дней")
+        if reminder.notes:
+            text += f"\n📝 {reminder.notes}"
         
-        if plant.fertilizer_frequency and plant.last_fertilized:
-            days = (today - plant.last_fertilized).days
-            if days >= plant.fertilizer_frequency:
-                messages.append(f"🧪 Удобрение! Прошло {days} дней")
+        # Отправка в Telegram
+        if reminder.user.notification_telegram and reminder.user.telegram_id:
+            send_telegram_notification.delay(reminder.user.telegram_id, text)
         
-        if plant.repot_frequency and plant.last_repotted:
-            days = (today - plant.last_repotted).days
-            if days >= plant.repot_frequency:
-                messages.append(f"🔄 Пересадка! Прошло {days} дней")
+        # Обновление даты следующего напоминания
+        if reminder.frequency == 'once':
+            reminder.is_active = False
+        elif reminder.frequency == 'daily':
+            reminder.next_reminder_date = today + timezone.timedelta(days=reminder.interval_days)
+        elif reminder.frequency == 'weekly':
+            reminder.next_reminder_date = today + timezone.timedelta(days=7 * reminder.interval_days)
+        elif reminder.frequency == 'monthly':
+            reminder.next_reminder_date = today + timezone.timedelta(days=30 * reminder.interval_days)
         
-        if messages:
-            text = f"🌿 {plant.name}\n" + "\n".join(messages)
-            
-            if plant.user.notification_telegram and plant.user.telegram_id:
-                send_telegram_notification.delay(plant.user.telegram_id, text)
+        reminder.save()
 
 
 @shared_task

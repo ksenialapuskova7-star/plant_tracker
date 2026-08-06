@@ -91,3 +91,75 @@ class CareLog(models.Model):
     
     def __str__(self):
         return f"{self.plant.name} — {self.get_action_type_display()} ({self.date})"
+
+class Reminder(models.Model):
+    class ActionType(models.TextChoices):
+        WATERING = 'watering', 'Полив'
+        FERTILIZING = 'fertilizing', 'Удобрение'
+        REPOTTING = 'repotting', 'Пересадка'
+        MISTING = 'misting', 'Опрыскивание'
+        PRUNING = 'pruning', 'Обрезка'
+        CUSTOM = 'custom', 'Своё действие'
+
+    class Frequency(models.TextChoices):
+        ONCE = 'once', 'Разово'
+        DAILY = 'daily', 'Ежедневно'
+        WEEKLY = 'weekly', 'Еженедельно'
+        MONTHLY = 'monthly', 'Ежемесячно'
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='reminders',
+        verbose_name="Пользователь"
+    )
+    plant = models.ForeignKey(
+        Plant,
+        on_delete=models.CASCADE,
+        related_name='reminders',
+        verbose_name="Растение"
+    )
+    action_type = models.CharField(
+        max_length=20,
+        choices=ActionType.choices,
+        verbose_name="Тип действия"
+    )
+    custom_action_name = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name="Своё название действия"
+    )
+    frequency = models.CharField(
+        max_length=20,
+        choices=Frequency.choices,
+        default=Frequency.ONCE,
+        verbose_name="Периодичность"
+    )
+    interval_days = models.PositiveIntegerField(
+        default=1,
+        verbose_name="Интервал (дни)"
+    )
+    next_reminder_date = models.DateField(
+        verbose_name="Дата следующего напоминания"
+    )
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name="Активно"
+    )
+    notes = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name="Заметки"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Напоминание"
+        verbose_name_plural = "Напоминания"
+        ordering = ['next_reminder_date']
+
+    def __str__(self):
+        action = self.custom_action_name or self.get_action_type_display()
+        return f"{self.plant.name} — {action} ({self.next_reminder_date})"
