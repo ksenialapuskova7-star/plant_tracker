@@ -25,13 +25,13 @@ SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
-# Вместо Redis используем SQLite для хранения задач
+# Telegram
+TELEGRAM_BOT_TOKEN = '8969448431:AAGd-conCfZno-UVfGga5RohTRR1dEdtmRY'
+
+# Celery с SQLite
 CELERY_BROKER_URL = 'sqla+sqlite:///celery.sqlite'
 CELERY_RESULT_BACKEND = 'db+sqlite:///celery.sqlite'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Europe/Moscow'
-
-# Telegram
-TELEGRAM_BOT_TOKEN = '8969448431:AAGd-conCfZno-UVfGga5RohTRR1dEdtmRY'  # Заменишь позже

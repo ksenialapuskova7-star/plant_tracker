@@ -12,8 +12,12 @@ def send_reminders():
     plants = Plant.objects.all()
     
     frequency_map = {
-        'daily': 1, 'every_2_days': 2, 'every_3_days': 3,
-        'weekly': 7, 'every_2_weeks': 14, 'monthly': 30,
+        'daily': 1,
+        'every_2_days': 2,
+        'every_3_days': 3,
+        'weekly': 7,
+        'every_2_weeks': 14,
+        'monthly': 30,
     }
     
     for plant in plants:
@@ -46,10 +50,16 @@ def send_reminders():
 def send_telegram_notification(chat_id, text):
     token = settings.TELEGRAM_BOT_TOKEN
     url = f"https://api.telegram.org/bot{token}/sendMessage"
+    
     try:
-        requests.post(url, json={
-            'chat_id': chat_id,
-            'text': text,
-        })
+        response = requests.post(
+            url,
+            json={'chat_id': chat_id, 'text': text},
+            timeout=30,
+            headers={'User-Agent': 'Mozilla/5.0'}
+        )
+        print(f"✅ Telegram отправлен: {response.status_code}")
+        return response.json()
     except Exception as e:
-        print(f"Ошибка Telegram: {e}")
+        print(f"❌ Ошибка Telegram: {e}")
+        return None
