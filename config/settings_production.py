@@ -34,4 +34,4 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Europe/Moscow'
 
 # Telegram
-TELEGRAM_BOT_TOKEN = 'YOUR_BOT_TOKEN_HERE'  # Заменишь позже
+TELEGRAM_BOT_TOKEN = '8969448431:AAGd-conCfZno-UVfGga5RohTRR1dEdtmRY'  # Заменишь позже
