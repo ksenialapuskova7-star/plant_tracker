@@ -13,11 +13,13 @@ def send_reminders():
     current_time = now.time()
     
     # Ищем напоминания на сегодня, активные и время которых уже прошло
+    # Ищем напоминания на сегодня с точным временем
     reminders = Reminder.objects.filter(
         is_active=True,
-        reminder_date__lte=today,
-        reminder_time__lte=current_time
+        reminder_date=today,
+        reminder_time=current_time
     )
+
     
     for reminder in reminders:
         action = reminder.custom_action_name or reminder.get_action_type_display()
