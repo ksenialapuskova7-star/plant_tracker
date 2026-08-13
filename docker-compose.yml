@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    container_name: plant_tracker_db
+    restart: always
+    environment:
+      POSTGRES_DB: plant_monitor
+      POSTGRES_USER: plant_user
+      POSTGRES_PASSWORD: plant_pass123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U plant_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: .
+    container_name: plant_tracker_web
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./media:/app/media
+      - ./staticfiles:/app/staticfiles
+    environment:
+      DB_NAME: plant_monitor
+      DB_USER: plant_user
+      DB_PASSWORD: plant_pass123
+      DB_HOST: db
+      DB_PORT: 5432
+      DJANGO_SECRET_KEY: your-secret-key-here
+      DEBUG: "False"
+
+volumes:
+  postgres_data:
