@@ -7,8 +7,15 @@ ALLOWED_HOSTS = ['Ksemm.pythonanywhere.com', 'www.Ksemm.pythonanywhere.com']
 # База данных — SQLite (для бесплатного тарифа)
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DB_NAME', 'plant_tracker'),
+        'USER': os.getenv('DB_USER', 'plant_user'),
+        'PASSWORD': os.getenv('DB_PASSWORD', 'plant_pass'),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'PORT': os.getenv('DB_PORT', '5432'),
+        'OPTIONS': {
+            'client_encoding': 'UTF8',
+        },
     }
 }
 

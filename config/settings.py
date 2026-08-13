@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+import sys
 
 load_dotenv()
 
@@ -60,10 +61,24 @@ DATABASES = {
         'NAME': os.getenv('DB_NAME', 'plant_tracker'),
         'USER': os.getenv('DB_USER', 'plant_user'),
         'PASSWORD': os.getenv('DB_PASSWORD', 'plant_pass'),
-        'HOST': os.getenv('DB_HOST', '127.0.0.1'),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
         'PORT': os.getenv('DB_PORT', '5432'),
+        'OPTIONS': {
+            'client_encoding': 'UTF8',
+        },
     }
 }
+
+# ============================================
+# 2️⃣ ТЕСТЫ — SQLite
+# ============================================
+if 'test' in sys.argv:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'test_db.sqlite3',
+        }
+    }
 
 AUTH_USER_MODEL = 'users.User'
 LOGIN_REDIRECT_URL = 'plants:list'
