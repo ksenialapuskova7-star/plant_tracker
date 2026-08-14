@@ -1,6 +1,6 @@
 from .settings import *
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['195.62.48.118', 'Ksemm.pythonanywhere.com', 'www.Ksemm.pythonanywhere.com', 'localhost', '127.0.0.1']
 
@@ -38,8 +38,9 @@ TELEGRAM_BOT_TOKEN = '8969448431:AAGd-conCfZno-UVfGga5RohTRR1dEdtmRY'
 
 # Celery с SQLite
 # Celery + Redis
-CELERY_BROKER_URL = 'redis://redis:6379/0'
-CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+# Celery с SQLite (без Redis)
+CELERY_BROKER_URL = 'sqla+sqlite:///celery.sqlite'
+CELERY_RESULT_BACKEND = 'db+sqlite:///celery.sqlite'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
