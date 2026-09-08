@@ -1,0 +1,501 @@
+/* ============================================
+   БАЗОВЫЕ СТИЛИ
+   ============================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f5f7fb;
+    color: #1a1a2e;
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+/* ============================================
+   НАВИГАЦИЯ
+   ============================================ */
+
+.navbar {
+    background: rgba(255, 255, 255, 0.9) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.04);
+    padding: 12px 0;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.4rem;
+    color: #6C63FF !important;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.navbar-brand i {
+    font-size: 1.8rem;
+    background: linear-gradient(135deg, #6C63FF, #FF6B8A);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.navbar .nav-link {
+    color: #6b7280 !important;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 10px;
+    transition: 0.3s;
+}
+
+.navbar .nav-link:hover {
+    color: #6C63FF !important;
+    background: rgba(108, 99, 255, 0.08);
+}
+
+.btn-outline-light {
+    border: 1.5px solid #e5e7eb !important;
+    color: #6b7280 !important;
+    border-radius: 10px;
+    padding: 6px 18px;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.btn-outline-light:hover {
+    background: #FF6B6B !important;
+    border-color: #FF6B6B !important;
+    color: white !important;
+    transform: translateY(-1px);
+}
+
+/* ============================================
+   КАРТОЧКИ
+   ============================================ */
+
+.card {
+    border: none;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 8px 30px rgba(108, 99, 255, 0.08);
+    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+.card:hover {
+    box-shadow: 0 12px 40px rgba(108, 99, 255, 0.15);
+    transform: translateY(-4px);
+}
+
+.card-header {
+    background: transparent;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 20px 24px;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.card-body {
+    padding: 24px;
+}
+
+.card-footer {
+    background: transparent;
+    border-top: 1px solid #e5e7eb;
+    padding: 16px 24px;
+}
+
+/* ============================================
+   БЕЙДЖИ
+   ============================================ */
+
+.badge {
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-weight: 500;
+    font-size: 0.8rem;
+    letter-spacing: 0.3px;
+    transition: 0.3s;
+}
+
+.badge.bg-secondary {
+    background: #9ca3af !important;
+}
+
+.badge-fruiting {
+    background: #10b981;
+    color: #fff;
+    font-size: 0.8rem;
+    padding: 5px 12px;
+    border-radius: 50px;
+    font-weight: 500;
+}
+
+.badge-non-fruiting {
+    background: #6b7280;
+    color: #fff;
+    font-size: 0.8rem;
+    padding: 5px 12px;
+    border-radius: 50px;
+    font-weight: 500;
+}
+
+/* ============================================
+   КНОПКИ
+   ============================================ */
+
+.btn {
+    border-radius: 10px;
+    padding: 10px 24px;
+    font-weight: 600;
+    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+}
+
+.btn-primary {
+    background: #6C63FF;
+    color: white;
+    box-shadow: 0 4px 14px rgba(108, 99, 255, 0.35);
+}
+
+.btn-primary:hover {
+    background: #4A42D4;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(108, 99, 255, 0.45);
+}
+
+.btn-success {
+    background: #4ECB71;
+    box-shadow: 0 4px 14px rgba(78, 203, 113, 0.35);
+}
+
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(78, 203, 113, 0.45);
+}
+
+.btn-danger {
+    background: #FF6B6B;
+    box-shadow: 0 4px 14px rgba(255, 107, 107, 0.35);
+}
+
+.btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(255, 107, 107, 0.45);
+}
+
+.btn-warning {
+    background: #FFB84D;
+    color: #1a1a2e;
+    box-shadow: 0 4px 14px rgba(255, 184, 77, 0.35);
+}
+
+.btn-warning:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(255, 184, 77, 0.45);
+}
+
+.btn-outline-secondary {
+    border: 1.5px solid #e5e7eb !important;
+    color: #6b7280;
+}
+
+.btn-outline-secondary:hover {
+    background: #f5f7fb;
+    border-color: #9ca3af !important;
+}
+
+/* ============================================
+   ФОРМЫ
+   ============================================ */
+
+.form-control,
+.form-select {
+    border: 1.5px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 12px 16px;
+    transition: 0.3s;
+    background: #f9fafb;
+    font-size: 0.95rem;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #6C63FF;
+    box-shadow: 0 0 0 4px rgba(108, 99, 255, 0.12);
+    background: white;
+}
+
+.form-label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #6b7280;
+    margin-bottom: 6px;
+}
+
+.form-check-input:checked {
+    background-color: #6C63FF;
+    border-color: #6C63FF;
+}
+
+/* ============================================
+   АЛЕРТЫ
+   ============================================ */
+
+.alert {
+    border: none;
+    border-radius: 12px;
+    padding: 16px 20px;
+    box-shadow: 0 8px 30px rgba(108, 99, 255, 0.08);
+}
+
+.alert-success {
+    background: #ecfdf5;
+    color: #065f46;
+}
+
+.alert-danger {
+    background: #fef2f2;
+    color: #991b1b;
+}
+
+.alert-warning {
+    background: #fffbeb;
+    color: #92400e;
+}
+
+/* ============================================
+   КАРУСЕЛЬ ФОТО
+   ============================================ */
+
+.photo-carousel {
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    background: #f8f9fa;
+}
+
+.photo-carousel .carousel-inner {
+    border-radius: 12px;
+}
+
+.photo-carousel .carousel-item img {
+    height: 350px;
+    object-fit: cover;
+}
+
+.photo-carousel .carousel-caption {
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 8px;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    padding: 12px;
+}
+
+.photo-carousel .carousel-caption p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #fff;
+}
+
+.photo-carousel .carousel-control-prev,
+.photo-carousel .carousel-control-next {
+    width: 40px;
+    height: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    margin: 0 10px;
+}
+
+.photo-carousel .carousel-control-prev:hover,
+.photo-carousel .carousel-control-next:hover {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.photo-carousel .carousel-indicators {
+    bottom: 10px;
+}
+
+.photo-carousel .carousel-indicators button {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: none;
+    margin: 0 4px;
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.photo-carousel .carousel-indicators button.active {
+    background: #fff;
+}
+
+/* ============================================
+   МНОЖЕСТВЕННЫЕ ФОТО В ФОРМЕ
+   ============================================ */
+
+.photo-item {
+    border-bottom: 1px dashed #dee2e6;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+}
+
+.photo-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+
+.photo-item .btn-danger {
+    margin-top: 8px;
+}
+
+/* ============================================
+   СТАТИСТИКА НА ГЛАВНОЙ
+   ============================================ */
+
+.stat-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    text-align: center;
+    box-shadow: 0 8px 30px rgba(108, 99, 255, 0.08);
+    transition: 0.3s;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(108, 99, 255, 0.15);
+}
+
+.stat-card .number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #6C63FF, #FF6B8A);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.stat-card .label {
+    font-size: 0.9rem;
+    color: #6b7280;
+    margin-top: 4px;
+}
+
+/* ============================================
+   ПОДВАЛ
+   ============================================ */
+
+footer {
+    background: transparent !important;
+    border-top: 1px solid #e5e7eb !important;
+    color: #9ca3af;
+    padding: 24px 0;
+    margin-top: 60px;
+}
+
+/* ============================================
+   АДАПТИВ
+   ============================================ */
+
+@media (max-width: 768px) {
+    .photo-carousel .carousel-item img {
+        height: 220px;
+    }
+    
+    .photo-carousel .carousel-control-prev,
+    .photo-carousel .carousel-control-next {
+        width: 30px;
+        height: 30px;
+    }
+    
+    .photo-item .col-md-5,
+    .photo-item .col-md-6,
+    .photo-item .col-md-1 {
+        margin-top: 8px;
+    }
+    
+    .stat-card .number {
+        font-size: 1.8rem;
+    }
+    
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+    
+    .card-body {
+        padding: 16px;
+    }
+}
+
+/* ============================================
+   СКРОЛЛ
+   ============================================ */
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f5f7fb;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #6C63FF;
+    border-radius: 50px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #4A42D4;
+}
+
+/* ============================================
+   КАРТОЧКА РАСТЕНИЯ В СПИСКЕ
+   ============================================ */
+
+.plant-card .card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+.plant-card .badge {
+    font-size: 0.75rem;
+}
+
+/* ============================================
+   СПИСОК КАТЕГОРИЙ
+   ============================================ */
+
+.category-list .list-group-item {
+    border: none;
+    padding: 14px 20px;
+    margin-bottom: 4px;
+    border-radius: 10px;
+    background: #f9fafb;
+    transition: 0.3s;
+}
+
+.category-list .list-group-item:hover {
+    background: white;
+    box-shadow: 0 8px 30px rgba(108, 99, 255, 0.08);
+}
+
+/* ============================================
+   НАПОМИНАНИЯ
+   ============================================ */
+
+.reminder-card {
+    border-left: 4px solid #6C63FF;
+}
+
+.reminder-card .badge {
+    font-size: 0.75rem;
+}

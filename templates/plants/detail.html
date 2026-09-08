@@ -6,26 +6,68 @@
 <div class="row">
     <div class="col-md-4">
         <div class="card shadow-sm">
-            {% if plant.photo %}
-                <img src="{{ plant.photo.url }}" class="card-img-top" style="height: 300px; object-fit: cover;">
+            <!-- Карусель фото -->
+            {% if plant.photos.all %}
+                <div id="plantPhotoCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        {% for photo in plant.photos.all %}
+                            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                <img src="{{ photo.image.url }}" class="d-block w-100" style="height: 300px; object-fit: cover;" alt="{{ photo.caption|default:plant.name }}">
+                                {% if photo.caption %}
+                                    <div class="carousel-caption d-none d-md-block" style="background: rgba(0,0,0,0.5); border-radius: 8px;">
+                                        <p class="mb-0">{{ photo.caption }}</p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {% if plant.photos.all|length > 1 %}
+                        <button class="carousel-control-prev" type="button" data-bs-target="#plantPhotoCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Предыдущее</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#plantPhotoCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Следующее</span>
+                        </button>
+                    {% endif %}
+                </div>
             {% else %}
                 <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 300px;">
                     <span class="display-1 text-muted">🌱</span>
                 </div>
             {% endif %}
+
+            <!-- Плодоносящее -->
             <div class="card-body">
                 <h3>{{ plant.name }}</h3>
                 <p class="text-muted"><em>{{ plant.scientific_name|default:"" }}</em></p>
-                <span class="badge bg-{% if plant.health_status == 'healthy' %}success{% elif plant.health_status == 'needs_water' %}warning{% elif plant.health_status == 'sick' %}danger{% else %}secondary{% endif %} fs-6">
-                    {{ plant.get_health_status_display }}
-                </span>
-                <hr>
+                <div class="mb-2">
+                    <span class="badge bg-{% if plant.health_status == 'healthy' %}success{% elif plant.health_status == 'needs_water' %}warning{% elif plant.health_status == 'sick' %}danger{% else %}secondary{% endif %} fs-6">
+                        {{ plant.get_health_status_display }}
+                    </span>
+                    {% if plant.is_fruiting %}
+                        <span class="badge bg-success fs-6">🍎 Плодоносящее</span>
+                    {% else %}
+                        <span class="badge bg-secondary fs-6">🌱 Не плодоносящее</span>
+                    {% endif %}
+                </div>
                 <p><i class="bi bi-geo-alt"></i> {{ plant.location|default:"Местоположение не указано" }}</p>
                 <p><i class="bi bi-lightbulb"></i> {{ plant.get_light_preference_display }}</p>
                 <p><i class="bi bi-droplet"></i> {{ plant.get_watering_frequency_display }}</p>
                 {% if plant.watering_volume %}
                     <p><i class="bi bi-water"></i> {{ plant.watering_volume }} мл воды</p>
                 {% endif %}
+                <p>
+                    <i class="bi bi-tag"></i> 
+                    {% if plant.custom_category %}
+                        {{ plant.custom_category }}
+                    {% elif plant.category %}
+                        {{ plant.category.name }}
+                    {% else %}
+                        <span class="text-muted">Без категории</span>
+                    {% endif %}
+                </p>
             </div>
         </div>
     </div>

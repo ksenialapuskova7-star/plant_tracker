@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Plant, CareLog, Reminder
+from .models import Plant, CareLog, Reminder, PlantPhoto
 from .forms import PlantForm, CareLogForm, ReminderForm
 
 
@@ -21,30 +21,91 @@ def plant_detail(request, pk):
 @login_required
 def plant_create(request):
     if request.method == 'POST':
-        form = PlantForm(request.POST, request.FILES)
+        form = PlantForm(request.POST, request.FILES, user=request.user)
+        
+        photos = request.FILES.getlist('photos')
+        MAX_PHOTOS = 10
+        
+        # Проверка: есть ли хотя бы одно фото
+        if not photos or not any(photo for photo in photos):
+            form.add_error(None, 'Добавьте хотя бы одно фото растения')
+            messages.error(request, 'Добавьте хотя бы одно фото')
+            return render(request, 'plants/form.html', {
+                'form': form,
+                'title': 'Добавить растение',
+                'button_text': 'Создать'
+            })
+        
+        # Проверка: максимум 10 фото
+        if len(photos) > MAX_PHOTOS:
+            form.add_error(None, f'Максимум {MAX_PHOTOS} фото')
+            messages.error(request, f'Максимум {MAX_PHOTOS} фото')
+            return render(request, 'plants/form.html', {
+                'form': form,
+                'title': 'Добавить растение',
+                'button_text': 'Создать'
+            })
+        
         if form.is_valid():
             plant = form.save(commit=False)
             plant.user = request.user
             plant.save()
+            
+            for idx, photo in enumerate(photos):
+                PlantPhoto.objects.create(
+                    plant=plant,
+                    image=photo,
+                    caption=request.POST.get(f'caption_{idx}', ''),
+                    order=idx
+                )
+            
             messages.success(request, 'Растение добавлено!')
             return redirect('plants:detail', pk=plant.pk)
     else:
-        form = PlantForm()
-    return render(request, 'plants/form.html', {'form': form, 'title': 'Добавить растение'})
-
+        form = PlantForm(user=request.user)
+    
+    return render(request, 'plants/form.html', {
+        'form': form,
+        'title': 'Добавить растение',
+        'button_text': 'Создать'
+    })
 
 @login_required
 def plant_edit(request, pk):
     plant = get_object_or_404(Plant, pk=pk, user=request.user)
+    
     if request.method == 'POST':
-        form = PlantForm(request.POST, request.FILES, instance=plant)
+        form = PlantForm(request.POST, request.FILES, instance=plant, user=request.user)
         if form.is_valid():
             form.save()
+            
+            # ===== УДАЛЕНИЕ ФОТО =====
+            delete_photos = request.POST.getlist('delete_photos')
+            if delete_photos:
+                PlantPhoto.objects.filter(id__in=delete_photos, plant=plant).delete()
+                messages.info(request, f'Удалено {len(delete_photos)} фото')
+            
+            # ===== ДОБАВЛЕНИЕ НОВЫХ ФОТО =====
+            photos = request.FILES.getlist('photos')
+            for idx, photo in enumerate(photos):
+                PlantPhoto.objects.create(
+                    plant=plant,
+                    image=photo,
+                    caption=request.POST.get(f'caption_{idx}', ''),
+                    order=plant.photos.count() + idx
+                )
+            
             messages.success(request, 'Растение обновлено!')
             return redirect('plants:detail', pk=plant.pk)
     else:
-        form = PlantForm(instance=plant)
-    return render(request, 'plants/form.html', {'form': form, 'title': 'Редактировать растение'})
+        form = PlantForm(instance=plant, user=request.user)
+    
+    return render(request, 'plants/form.html', {
+        'form': form,
+        'plant': plant,
+        'title': 'Редактировать растение',
+        'button_text': 'Сохранить'
+    })
 
 
 @login_required
@@ -81,6 +142,7 @@ def add_care(request, pk):
         form = CareLogForm()
     return render(request, 'plants/add_care.html', {'form': form, 'plant': plant})
 
+
 @login_required
 def reminder_create(request, plant_id=None):
     if plant_id:
@@ -108,6 +170,7 @@ def reminder_create(request, plant_id=None):
         'title': 'Создать напоминание',
         'button_text': 'Создать',
     })
+
 
 @login_required
 def reminder_list(request):

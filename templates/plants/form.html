@@ -5,7 +5,7 @@
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-md-8">
+    <div class="col-md-10">
         <div class="card shadow-sm">
             <div class="card-header">
                 <h4>{{ title }}</h4>
@@ -13,10 +13,231 @@
             <div class="card-body">
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
-                    {{ form|crispy }}
-                    <div class="d-flex gap-2 mt-3">
+                    
+                    {{ form.non_field_errors }}
+                    
+                    <!-- ===== ОСНОВНЫЕ ПОЛЯ ===== -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.name.id_for_label }}" class="form-label">Название</label>
+                                {{ form.name }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.scientific_name.id_for_label }}" class="form-label">Латинское название</label>
+                                {{ form.scientific_name }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.location.id_for_label }}" class="form-label">Местоположение</label>
+                        {{ form.location }}
+                    </div>
+
+                    <!-- ===== КАТЕГОРИЯ ===== -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.category_choice.id_for_label }}" class="form-label">Категория</label>
+                                {{ form.category_choice }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.custom_category.id_for_label }}" class="form-label">Или введите свою</label>
+                                {{ form.custom_category }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ===== ПЛОДОНОСЯЩЕЕ ===== -->
+                    <div class="mb-3 form-check">
+                        {{ form.is_fruiting }}
+                        <label for="{{ form.is_fruiting.id_for_label }}" class="form-check-label">
+                            {{ form.is_fruiting.label }}
+                        </label>
+                    </div>
+
+                    <!-- ===== УХОД ===== -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.light_preference.id_for_label }}" class="form-label">Свет</label>
+                                {{ form.light_preference }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.watering_frequency.id_for_label }}" class="form-label">Полив</label>
+                                {{ form.watering_frequency }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="{{ form.watering_volume.id_for_label }}" class="form-label">Объём воды (мл)</label>
+                                {{ form.watering_volume }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="{{ form.fertilizer_frequency.id_for_label }}" class="form-label">Удобрение (дней)</label>
+                                {{ form.fertilizer_frequency }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="{{ form.repot_frequency.id_for_label }}" class="form-label">Пересадка (дней)</label>
+                                {{ form.repot_frequency }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ===== ТЕМПЕРАТУРА ===== -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.temperature_min.id_for_label }}" class="form-label">Мин. температура</label>
+                                {{ form.temperature_min }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.temperature_max.id_for_label }}" class="form-label">Макс. температура</label>
+                                {{ form.temperature_max }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="{{ form.humidity_preference.id_for_label }}" class="form-label">Влажность (%)</label>
+                                {{ form.humidity_preference }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3 form-check">
+                                {{ form.needs_misting }}
+                                <label for="{{ form.needs_misting.id_for_label }}" class="form-check-label">
+                                    {{ form.needs_misting.label }}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3 form-check">
+                                {{ form.is_toxic }}
+                                <label for="{{ form.is_toxic.id_for_label }}" class="form-check-label">
+                                    {{ form.is_toxic.label }}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ===== ПЕРИОД ПОКОЯ ===== -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.dormant_period_start.id_for_label }}" class="form-label">Начало покоя</label>
+                                {{ form.dormant_period_start }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.dormant_period_end.id_for_label }}" class="form-label">Конец покоя</label>
+                                {{ form.dormant_period_end }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ===== ДАТА ПОКУПКИ ===== -->
+                    <div class="mb-3">
+                        <label for="{{ form.purchased_at.id_for_label }}" class="form-label">Дата покупки</label>
+                        {{ form.purchased_at }}
+                    </div>
+
+                    <!-- ===== СТАТУС ===== -->
+                    <div class="mb-3">
+                        <label for="{{ form.health_status.id_for_label }}" class="form-label">Состояние здоровья</label>
+                        {{ form.health_status }}
+                    </div>
+
+                    <!-- ===== ЗАМЕТКИ ===== -->
+                    <div class="mb-3">
+                        <label for="{{ form.notes.id_for_label }}" class="form-label">Заметки</label>
+                        {{ form.notes }}
+                    </div>
+
+                    <!-- ===== ФОТО ===== -->
+                    <div class="mt-4">
+                        <h5>📸 Фото растения</h5>
+                        <p class="text-muted small">Загрузите фото растения. Можно добавить несколько изображений.</p>
+                        
+                        {% if plant and plant.photos.all %}
+                    <div class="mt-3">
+                        <h6>📸 Существующие фото</h6>
+                        <div class="row">
+                            {% for photo in plant.photos.all %}
+                                <div class="col-md-3 text-center mb-2">
+                                    <img src="{{ photo.image.url }}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;">
+                                    <div class="form-check">
+                                        <input type="checkbox" name="delete_photos" value="{{ photo.id }}" class="form-check-input" id="delete_{{ photo.id }}">
+                                        <label for="delete_{{ photo.id }}" class="form-check-label text-danger">Удалить</label>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                        <div id="photo-container">
+                            <div class="photo-item row mb-3 align-items-end">
+                                <div class="col-md-5">
+                                    <label class="form-label">Фото</label>
+                                    <input type="file" name="photos" class="form-control" accept="image/*" onchange="previewPhoto(this, 0)">
+                                </div>
+                                <div class="col-md-5">
+                                    <label class="form-label">Подпись</label>
+                                    <input type="text" name="caption_0" class="form-control" placeholder="Подпись к фото">
+                                </div>
+                                <div class="col-md-2 text-center">
+                                    <div class="preview-container" id="preview_0">
+                                        <span class="text-muted small">🖼️</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="photo-item row mb-3 align-items-end">
+                                <div class="col-md-5">
+                                    <label class="form-label">Фото</label>
+                                    <input type="file" name="photos" class="form-control" accept="image/*" onchange="previewPhoto(this, 1)">
+                                </div>
+                                <div class="col-md-5">
+                                    <label class="form-label">Подпись</label>
+                                    <input type="text" name="caption_1" class="form-control" placeholder="Подпись к фото">
+                                </div>
+                                <div class="col-md-2 text-center">
+                                    <div class="preview-container" id="preview_1">
+                                        <span class="text-muted small">🖼️</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="button" class="btn btn-outline-secondary btn-sm mt-2" onclick="addPhoto()">
+                            <i class="bi bi-plus-circle"></i> Добавить ещё фото
+                        </button>
+                    </div>
+
+                    <!-- ===== КНОПКИ ===== -->
+                    <div class="mt-4 d-flex gap-2">
                         <button type="submit" class="btn btn-success">
-                            <i class="bi bi-check-lg"></i> Сохранить
+                            <i class="bi bi-check-lg"></i> {{ button_text }}
                         </button>
                         <a href="{% url 'plants:list' %}" class="btn btn-secondary">Отмена</a>
                     </div>
@@ -25,4 +246,106 @@
         </div>
     </div>
 </div>
+
+<!-- ===== SKRIPT ===== -->
+<script>
+let photoCount = 2;
+
+function previewPhoto(input, index) {
+    const preview = document.getElementById('preview_' + index);
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.innerHTML = `<img src="${e.target.result}" style="max-width: 80px; max-height: 80px; border-radius: 8px; object-fit: cover; border: 2px solid #e5e7eb;">`;
+        }
+        reader.readAsDataURL(input.files[0]);
+    } else {
+        preview.innerHTML = `<span class="text-muted small">🖼️</span>`;
+    }
+}
+
+function addPhoto() {
+    const container = document.getElementById('photo-container');
+    const newItem = document.createElement('div');
+    newItem.className = 'photo-item row mb-3 align-items-end';
+    newItem.innerHTML = `
+        <div class="col-md-5">
+            <label class="form-label">Фото</label>
+            <input type="file" name="photos" class="form-control" accept="image/*" onchange="previewPhoto(this, ${photoCount})">
+        </div>
+        <div class="col-md-5">
+            <label class="form-label">Подпись</label>
+            <input type="text" name="caption_${photoCount}" class="form-control" placeholder="Подпись к фото">
+        </div>
+        <div class="col-md-2 text-center">
+            <div class="preview-container" id="preview_${photoCount}">
+                <span class="text-muted small">🖼️</span>
+            </div>
+        </div>
+        <div class="col-12 mt-1">
+            <button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.parentElement.remove()">
+                <i class="bi bi-trash"></i> Удалить
+            </button>
+        </div>
+    `;
+    container.appendChild(newItem);
+    photoCount++;
+}
+</script>
+
+<style>
+.photo-item {
+    border-bottom: 1px dashed #dee2e6;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+}
+.photo-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+.preview-container {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f9fafb;
+    border-radius: 8px;
+    border: 2px dashed #e5e7eb;
+    overflow: hidden;
+}
+.preview-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+</style>
+
+<!-- SortableJS для перетаскивания -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('photo-container');
+    if (container) {
+        Sortable.create(container, {
+            animation: 150,
+            handle: '.photo-item',
+            onEnd: function() {
+                // Обновляем порядок
+                document.querySelectorAll('.photo-item').forEach((item, index) => {
+                    const input = item.querySelector('input[name^="caption_"]');
+                    if (input) {
+                        const name = input.getAttribute('name');
+                        const newName = name.replace(/caption_\d+/, `caption_${index}`);
+                        input.setAttribute('name', newName);
+                    }
+                });
+            }
+        });
+    }
+});
+</script>
+
 {% endblock %}
