@@ -39,6 +39,25 @@ services:
       DB_PORT: 5432
       DJANGO_SECRET_KEY: your-secret-key-here
       DEBUG: "False"
+celery:
+  build: .
+  container_name: plant_tracker_celery
+  restart: always
+  depends_on:
+    - db
+  environment:
+    DB_NAME: plant_monitor
+    DB_USER: plant_user
+    DB_PASSWORD: plant_pass123
+    DB_HOST: db
+    DB_PORT: 5432
+    DJANGO_SECRET_KEY: your-secret-key-here
+    DEBUG: "False"
+  command: celery -A config worker --loglevel=info
+  deploy:
+    resources:
+      limits:
+        memory: 256M
 
 volumes:
   postgres_data:

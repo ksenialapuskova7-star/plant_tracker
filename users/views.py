@@ -9,21 +9,12 @@ def register(request):
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            
-            # Если указан Telegram username, пробуем получить chat_id
-            if user.telegram_username:
-                chat_id = get_chat_id_by_username(user.telegram_username)
-                if chat_id:
-                    user.telegram_id = chat_id
-                    user.notification_telegram = True
-                    user.save()
-                    messages.success(request, f'Telegram подключен!')
-                else:
-                    messages.warning(request, 'Не удалось найти Telegram username. Проверьте правильность написания.')
-            
             login(request, user)
             messages.success(request, 'Регистрация успешна!')
             return redirect('plants:list')
+        else:
+            # Если форма невалидна — показываем ошибки
+            messages.error(request, 'Ошибка регистрации. Проверьте данные.')
     else:
         form = UserRegistrationForm()
     
