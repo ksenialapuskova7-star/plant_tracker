@@ -76,7 +76,6 @@ class PlantForm(forms.ModelForm):
                 self.fields['custom_category'].initial = self.instance.custom_category
             elif self.instance.category:
                 self.fields['category_choice'].initial = self.instance.category
-
     def save(self, commit=True):
         instance = super().save(commit=False)
         

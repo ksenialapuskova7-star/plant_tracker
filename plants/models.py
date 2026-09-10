@@ -4,6 +4,30 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 User = get_user_model()
 
+class Category(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='categories',
+        verbose_name="Владелец"
+    )
+    name = models.CharField(
+        max_length=100,
+        verbose_name="Название категории"
+    )
+    color = models.CharField(
+        max_length=7,
+        default="#3B82F6",
+        verbose_name="Цвет категории (HEX)"
+    )
+
+    class Meta:
+        verbose_name = "Категория"
+        verbose_name_plural = "Категории"
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
 
 class Plant(models.Model):
     class HealthStatus(models.TextChoices):
@@ -210,6 +234,27 @@ class PlantPhoto(models.Model):
     )
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='plants',
+        verbose_name="Категория"
+    )
+    
+    custom_category = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name="Своя категория"
+    )
+    
+    is_fruiting = models.BooleanField(
+        default=False,
+        verbose_name="Плодоносящее"
+    )
+
     class Meta:
         ordering = ['order', 'uploaded_at']
         verbose_name = "Фото растения"
@@ -217,28 +262,3 @@ class PlantPhoto(models.Model):
 
     def __str__(self):
         return f"{self.plant.name} - Фото {self.order + 1}"
-
-class Category(models.Model):
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='categories',
-        verbose_name="Владелец"
-    )
-    name = models.CharField(
-        max_length=100,
-        verbose_name="Название категории"
-    )
-    color = models.CharField(
-        max_length=7,
-        default="#3B82F6",
-        verbose_name="Цвет категории (HEX)"
-    )
-
-    class Meta:
-        verbose_name = "Категория"
-        verbose_name_plural = "Категории"
-        ordering = ['name']
-
-    def __str__(self):
-        return self.name
