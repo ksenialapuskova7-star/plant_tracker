@@ -173,66 +173,72 @@
                         {{ form.notes }}
                     </div>
 
-                    <!-- ===== ФОТО ===== -->
-                    <div class="mt-4">
-                        <h5>📸 Фото растения</h5>
-                        <p class="text-muted small">Загрузите фото растения. Можно добавить несколько изображений.</p>
-                        
-                        {% if plant and plant.photos.all %}
-                    <div class="mt-3">
-                        <h6>📸 Существующие фото</h6>
-                        <div class="row">
-                            {% for photo in plant.photos.all %}
-                                <div class="col-md-3 text-center mb-2">
-                                    <img src="{{ photo.image.url }}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;">
-                                    <div class="form-check">
-                                        <input type="checkbox" name="delete_photos" value="{{ photo.id }}" class="form-check-input" id="delete_{{ photo.id }}">
-                                        <label for="delete_{{ photo.id }}" class="form-check-label text-danger">Удалить</label>
-                                    </div>
-                                </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                {% endif %}
+                    let photoCount = 2;
 
-                        <div id="photo-container">
-                            <div class="photo-item row mb-3 align-items-end">
-                                <div class="col-md-5">
-                                    <label class="form-label">Фото</label>
-                                    <input type="file" name="photos" class="form-control" accept="image/*" onchange="previewPhoto(this, 0)">
-                                </div>
-                                <div class="col-md-5">
-                                    <label class="form-label">Подпись</label>
-                                    <input type="text" name="caption_0" class="form-control" placeholder="Подпись к фото">
-                                </div>
-                                <div class="col-md-2 text-center">
-                                    <div class="preview-container" id="preview_0">
-                                        <span class="text-muted small">🖼️</span>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="photo-item row mb-3 align-items-end">
-                                <div class="col-md-5">
-                                    <label class="form-label">Фото</label>
-                                    <input type="file" name="photos" class="form-control" accept="image/*" onchange="previewPhoto(this, 1)">
-                                </div>
-                                <div class="col-md-5">
-                                    <label class="form-label">Подпись</label>
-                                    <input type="text" name="caption_1" class="form-control" placeholder="Подпись к фото">
-                                </div>
-                                <div class="col-md-2 text-center">
-                                    <div class="preview-container" id="preview_1">
-                                        <span class="text-muted small">🖼️</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <button type="button" class="btn btn-outline-secondary btn-sm mt-2" onclick="addPhoto()">
-                            <i class="bi bi-plus-circle"></i> Добавить ещё фото
-                        </button>
-                    </div>
+function previewPhoto(input, index) {
+    const preview = document.getElementById('preview_' + index);
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            // Превью в форме
+            preview.innerHTML = `<img src="${e.target.result}" style="max-width: 80px; max-height: 80px; border-radius: 8px; object-fit: cover; border: 2px solid #e5e7eb;">`;
+            
+            // Добавляем в карусель
+            updatePhotoCarousel();
+        }
+        reader.readAsDataURL(input.files[0]);
+    } else {
+        preview.innerHTML = `<span class="text-muted small">🖼️</span>`;
+    }
+}
+
+function updatePhotoCarousel() {
+    const carousel = document.getElementById('photo-preview-carousel');
+    carousel.innerHTML = '';
+    
+    document.querySelectorAll('.preview-container').forEach((container, idx) => {
+        const img = container.querySelector('img');
+        if (img) {
+            const slide = document.createElement('div');
+            slide.className = 'flex-shrink-0 text-center';
+            slide.style.width = '120px';
+            slide.innerHTML = `
+                <img src="${img.src}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px; border: 2px solid #e5e7eb;">
+            `;
+            carousel.appendChild(slide);
+        }
+    });
+}
+
+function addPhoto() {
+    const container = document.getElementById('photo-container');
+    const newItem = document.createElement('div');
+    newItem.className = 'photo-item row mb-3 align-items-end';
+    newItem.innerHTML = `
+        <div class="col-md-5">
+            <label class="form-label">Фото</label>
+            <input type="file" name="photos" class="form-control" accept="image/*" onchange="previewPhoto(this, ${photoCount})">
+        </div>
+        <div class="col-md-5">
+            <label class="form-label">Подпись</label>
+            <input type="text" name="caption_${photoCount}" class="form-control" placeholder="Подпись к фото">
+        </div>
+        <div class="col-md-2 text-center">
+            <div class="preview-container" id="preview_${photoCount}">
+                <span class="text-muted small">🖼️</span>
+            </div>
+        </div>
+        <div class="col-12 mt-1">
+            <button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.parentElement.remove(); updatePhotoCarousel();">
+                <i class="bi bi-trash"></i> Удалить
+            </button>
+        </div>
+    `;
+    container.appendChild(newItem);
+    photoCount++;
+}
+
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 
                     <!-- ===== КНОПКИ ===== -->
                     <div class="mt-4 d-flex gap-2">

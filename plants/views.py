@@ -24,7 +24,12 @@ def plant_create(request):
         form = PlantForm(request.POST, request.FILES, user=request.user)
         
         photos = request.FILES.getlist('photos')
-        MAX_PHOTOS = 10
+        if not photos or not any(photo for photo in photos):
+            form.add_error(None, 'Добавьте хотя бы одно фото')
+            return render(...)
+        if len(photos) > 10:
+            form.add_error(None, 'Максимум 10 фото')
+            return render(...)
         
         # Проверка: есть ли хотя бы одно фото
         if not photos or not any(photo for photo in photos):
@@ -83,7 +88,6 @@ def plant_edit(request, pk):
             delete_photos = request.POST.getlist('delete_photos')
             if delete_photos:
                 PlantPhoto.objects.filter(id__in=delete_photos, plant=plant).delete()
-                messages.info(request, f'Удалено {len(delete_photos)} фото')
             
             # ===== ДОБАВЛЕНИЕ НОВЫХ ФОТО =====
             photos = request.FILES.getlist('photos')
