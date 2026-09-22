@@ -8,7 +8,7 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-key')
-DEBUG = False
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.1.6', '*']
 
 INSTALLED_APPS = [
@@ -57,21 +57,12 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME', 'plant_tracker'),
-        'USER': os.getenv('DB_USER', 'plant_user'),
-        'PASSWORD': os.getenv('DB_PASSWORD', 'plant_pass'),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
-        'PORT': os.getenv('DB_PORT', '5432'),
-        'OPTIONS': {
-            'client_encoding': 'UTF8',
-        },
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
-# ============================================
-# 2️⃣ ТЕСТЫ — SQLite
-# ============================================
+
 if 'test' in sys.argv:
     DATABASES = {
         'default': {

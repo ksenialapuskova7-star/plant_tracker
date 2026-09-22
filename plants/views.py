@@ -18,21 +18,15 @@ def plant_detail(request, pk):
     return render(request, 'plants/detail.html', {'plant': plant, 'care_logs': care_logs})
 
 
+MAX_PHOTOS = 10
+
 @login_required
 def plant_create(request):
     if request.method == 'POST':
         form = PlantForm(request.POST, request.FILES, user=request.user)
-        
-        photos = request.FILES.getlist('photos')
-        if not photos or not any(photo for photo in photos):
-            form.add_error(None, 'Добавьте хотя бы одно фото')
-            return render(...)
-        if len(photos) > 10:
-            form.add_error(None, 'Максимум 10 фото')
-            return render(...)
-        
-        # Проверка: есть ли хотя бы одно фото
-        if not photos or not any(photo for photo in photos):
+        photos = [p for p in request.FILES.getlist('photos') if p]
+
+        if not photos:
             form.add_error(None, 'Добавьте хотя бы одно фото растения')
             messages.error(request, 'Добавьте хотя бы одно фото')
             return render(request, 'plants/form.html', {
@@ -40,8 +34,7 @@ def plant_create(request):
                 'title': 'Добавить растение',
                 'button_text': 'Создать'
             })
-        
-        # Проверка: максимум 10 фото
+
         if len(photos) > MAX_PHOTOS:
             form.add_error(None, f'Максимум {MAX_PHOTOS} фото')
             messages.error(request, f'Максимум {MAX_PHOTOS} фото')
@@ -50,12 +43,12 @@ def plant_create(request):
                 'title': 'Добавить растение',
                 'button_text': 'Создать'
             })
-        
+
         if form.is_valid():
             plant = form.save(commit=False)
             plant.user = request.user
             plant.save()
-            
+
             for idx, photo in enumerate(photos):
                 PlantPhoto.objects.create(
                     plant=plant,
@@ -63,12 +56,12 @@ def plant_create(request):
                     caption=request.POST.get(f'caption_{idx}', ''),
                     order=idx
                 )
-            
+
             messages.success(request, 'Растение добавлено!')
             return redirect('plants:detail', pk=plant.pk)
     else:
         form = PlantForm(user=request.user)
-    
+
     return render(request, 'plants/form.html', {
         'form': form,
         'title': 'Добавить растение',

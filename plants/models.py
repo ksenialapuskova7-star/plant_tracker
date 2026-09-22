@@ -199,6 +199,30 @@ class Reminder(models.Model):
         null=True,
         verbose_name="Заметки"
     )
+
+    category = models.ForeignKey(
+        'Category',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='plants',
+        verbose_name="Категория"
+    )
+    custom_category = models.CharField(
+        max_length=100, blank=True, null=True,
+        verbose_name="Пользовательская категория"
+    )
+    is_fruiting = models.BooleanField(
+        default=False, verbose_name="Плодоносящее"
+    )
+
+    def get_display_category(self):
+        if self.custom_category:
+            return self.custom_category
+        if self.category:
+            return self.category.name
+        return "Без категории"
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -233,27 +257,6 @@ class PlantPhoto(models.Model):
         verbose_name="Порядок"
     )
     uploaded_at = models.DateTimeField(auto_now_add=True)
-
-    category = models.ForeignKey(
-        Category,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='plants',
-        verbose_name="Категория"
-    )
-    
-    custom_category = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        verbose_name="Своя категория"
-    )
-    
-    is_fruiting = models.BooleanField(
-        default=False,
-        verbose_name="Плодоносящее"
-    )
 
     class Meta:
         ordering = ['order', 'uploaded_at']

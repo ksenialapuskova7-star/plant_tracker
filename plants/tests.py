@@ -66,18 +66,19 @@ class ReminderModelTest(TestCase):
         # Проверяем только часть строки, а не всё полностью
         self.assertIn('Фикус', str(reminder))
         self.assertIn('Полив', str(reminder))
-        def test_reminder_str_method(self):
-            """Тест строкового представления напоминания"""
-            reminder = Reminder.objects.create(
-                user=self.user,
-                plant=self.plant,
-                action_type='custom',
-                custom_action_name='Опрыскивание',
-                frequency='weekly',
-                reminder_date=timezone.now().date(),
-                reminder_time=timezone.now().time()
-            )
-            self.assertIn('Опрыскивание', str(reminder))
+
+    def test_reminder_str_method(self):
+        """Тест строкового представления напоминания"""
+        reminder = Reminder.objects.create(
+            user=self.user,
+            plant=self.plant,
+            action_type='custom',
+            custom_action_name='Опрыскивание',
+            frequency='weekly',
+            reminder_date=timezone.now().date(),
+            reminder_time=timezone.now().time()
+    )
+        self.assertIn('Опрыскивание', str(reminder))
 
 
 class CareLogModelTest(TestCase):

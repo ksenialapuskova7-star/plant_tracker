@@ -7,17 +7,16 @@ import requests
 @shared_task
 def send_reminders():
     from .models import Reminder
+    from datetime import timedelta
     
     now = timezone.now()
-    today = now.date()
-    current_time = now.time()
+    window_start = (now - timedelta(minutes=1)).time()
     
-    # Ищем напоминания на сегодня, активные и время которых уже прошло
-    # Ищем напоминания на сегодня с точным временем
     reminders = Reminder.objects.filter(
         is_active=True,
-        reminder_date=today,
-        reminder_time=current_time
+        reminder_date=now.date(),
+        reminder_time__gte=window_start,
+        reminder_time__lte=now.time(),
     )
 
     

@@ -67,15 +67,16 @@ class PlantForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
-        
+
         if user:
             self.fields['category_choice'].queryset = Category.objects.filter(user=user)
-        
+
         if self.instance and self.instance.pk:
             if self.instance.custom_category:
                 self.fields['custom_category'].initial = self.instance.custom_category
-            elif self.instance.category:
+            elif getattr(self.instance, 'category', None):
                 self.fields['category_choice'].initial = self.instance.category
+
     def save(self, commit=True):
         instance = super().save(commit=False)
         
