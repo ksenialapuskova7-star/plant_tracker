@@ -26,84 +26,105 @@ def plant_create(request):
         form = PlantForm(request.POST, request.FILES, user=request.user)
         photos = [p for p in request.FILES.getlist('photos') if p]
 
-        if not photos:
-            form.add_error(None, 'Добавьте хотя бы одно фото растения')
-            messages.error(request, 'Добавьте хотя бы одно фото')
-            return render(request, 'plants/form.html', {
-                'form': form,
-                'title': 'Добавить растение',
-                'button_text': 'Создать'
-            })
+    if not photos:
+        form.add_error(None, 'Добавьте хотя бы одно фото')
+        return render(request, 'plants/form.html', {
+            'form': form,
+            'title': 'Добавить растение',
+            'button_text': 'Создать'
+        })
 
-        if len(photos) > MAX_PHOTOS:
-            form.add_error(None, f'Максимум {MAX_PHOTOS} фото')
-            messages.error(request, f'Максимум {MAX_PHOTOS} фото')
-            return render(request, 'plants/form.html', {
-                'form': form,
-                'title': 'Добавить растение',
-                'button_text': 'Создать'
-            })
+    if len(photos) > 10:
+        form.add_error(None, 'Максимум 10 фото')
+        return render(request, 'plants/form.html', {
+            'form': form,
+            'title': 'Добавить растение',
+            'button_text': 'Создать'
+        })
 
-        if form.is_valid():
-            plant = form.save(commit=False)
-            plant.user = request.user
-            plant.save()
+    if form.is_valid():
+        plant = form.save(commit=False)
+        plant.user = request.user
+        plant.save()
 
-            for idx, photo in enumerate(photos):
-                PlantPhoto.objects.create(
-                    plant=plant,
-                    image=photo,
-                    caption=request.POST.get(f'caption_{idx}', ''),
-                    order=idx
-                )
+        main_index = None
+        for idx in range(len(photos)):
+            if request.POST.get(f'is_main_{idx}') == 'on' and main_index is None:
+                main_index = idx
 
-            messages.success(request, 'Растение добавлено!')
-            return redirect('plants:detail', pk=plant.pk)
-    else:
-        form = PlantForm(user=request.user)
+        for idx, photo in enumerate(photos):
+            is_main = (idx == main_index) if main_index is not None else (idx == 0)
+            PlantPhoto.objects.create(
+                plant=plant,
+                image=photo,
+                caption=request.POST.get(f'caption_{idx}', ''),
+                order=idx,
+                is_main=is_main,
+            )
 
-    return render(request, 'plants/form.html', {
-        'form': form,
-        'title': 'Добавить растение',
-        'button_text': 'Создать'
-    })
+        messages.success(request, 'Растение добавлено!')
+        return redirect('plants:detail', pk=plant.pk)
 
 @login_required
 def plant_edit(request, pk):
     plant = get_object_or_404(Plant, pk=pk, user=request.user)
-    
+
     if request.method == 'POST':
         form = PlantForm(request.POST, request.FILES, instance=plant, user=request.user)
+
         if form.is_valid():
             form.save()
-            
+
             # ===== УДАЛЕНИЕ ФОТО =====
             delete_photos = request.POST.getlist('delete_photos')
             if delete_photos:
                 PlantPhoto.objects.filter(id__in=delete_photos, plant=plant).delete()
-            
-            # ===== ДОБАВЛЕНИЕ НОВЫХ ФОТО =====
-            photos = request.FILES.getlist('photos')
+
+            # ===== НОВЫЕ ФОТО =====
+            photos = [p for p in request.FILES.getlist('photos') if p]
+
+            # Определяем главное фото среди НОВЫХ
+            main_index = None
+            for idx in range(len(photos)):
+                if request.POST.get(f'is_main_{idx}') == 'on' and main_index is None:
+                    main_index = idx
+
+            # Если пользователь отметил главное среди новых —
+            # снимаем флаг "главное" со всех старых
+            if main_index is not None:
+                plant.photos.update(is_main=False)
+
+            # Сохраняем новые фото
+            start_order = plant.photos.count()
             for idx, photo in enumerate(photos):
+                is_main = (idx == main_index) if main_index is not None else False
                 PlantPhoto.objects.create(
                     plant=plant,
                     image=photo,
                     caption=request.POST.get(f'caption_{idx}', ''),
-                    order=plant.photos.count() + idx
+                    order=start_order + idx,
+                    is_main=is_main,
                 )
-            
+
+            # Если вообще ни одного главного — назначим первое
+            if not plant.photos.filter(is_main=True).exists():
+                first = plant.photos.order_by('order').first()
+                if first:
+                    first.is_main = True
+                    first.save(update_fields=['is_main'])
+
             messages.success(request, 'Растение обновлено!')
             return redirect('plants:detail', pk=plant.pk)
+
     else:
         form = PlantForm(instance=plant, user=request.user)
-    
+
     return render(request, 'plants/form.html', {
         'form': form,
         'plant': plant,
         'title': 'Редактировать растение',
         'button_text': 'Сохранить'
     })
-
 
 @login_required
 def plant_delete(request, pk):

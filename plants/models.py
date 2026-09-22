@@ -252,6 +252,7 @@ class PlantPhoto(models.Model):
         null=True,
         verbose_name="Подпись к фото"
     )
+    is_main = models.BooleanField(default=False, verbose_name="Главное фото") 
     order = models.PositiveIntegerField(
         default=0,
         verbose_name="Порядок"
