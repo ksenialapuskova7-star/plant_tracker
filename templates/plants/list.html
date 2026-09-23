@@ -13,26 +13,44 @@
 <div class="row row-cols-1 row-cols-md-3 g-4">
     {% for plant in plants %}
         <div class="col">
-            <div class="card h-100 shadow-sm">
-                {% if plant.photo %}
-                    <img src="{{ plant.photo.url }}" class="card-img-top" style="height: 200px; object-fit: cover;">
-                {% else %}
-                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
-                        <span class="display-1 text-muted">🌱</span>
-                    </div>
-                {% endif %}
+            <div class="card h-100 shadow-sm plant-card">
+                {% with main_photo=plant.photos.all|first %}
+                    {% if main_photo %}
+                        <img src="{{ main_photo.image.url }}" class="card-img-top" style="height: 200px; object-fit: cover;" alt="{{ plant.name }}">
+                    {% elif plant.photo %}
+                        <img src="{{ plant.photo.url }}" class="card-img-top" style="height: 200px; object-fit: cover;" alt="{{ plant.name }}">
+                    {% else %}
+                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                            <span class="display-1 text-muted">🌱</span>
+                        </div>
+                    {% endif %}
+                {% endwith %}
+
                 <div class="card-body">
                     <h5 class="card-title">{{ plant.name }}</h5>
                     {% if plant.scientific_name %}
                         <p class="card-text text-muted small">{{ plant.scientific_name }}</p>
                     {% endif %}
+
                     <span class="badge bg-{% if plant.health_status == 'healthy' %}success{% elif plant.health_status == 'needs_water' %}warning{% elif plant.health_status == 'sick' %}danger{% else %}secondary{% endif %}">
                         {{ plant.get_health_status_display }}
                     </span>
+
+                    {% if plant.is_fruiting %}
+                        <span class="badge bg-success">🍎 Плодоносящее</span>
+                    {% endif %}
+
                     <p class="card-text mt-2 small">
                         <i class="bi bi-geo-alt"></i> {{ plant.location|default:"Не указано" }}
                     </p>
+
+                    {% if plant.custom_category %}
+                        <p class="card-text small"><i class="bi bi-tag"></i> {{ plant.custom_category }}</p>
+                    {% elif plant.category %}
+                        <p class="card-text small"><i class="bi bi-tag"></i> {{ plant.category.name }}</p>
+                    {% endif %}
                 </div>
+
                 <div class="card-footer bg-transparent d-flex justify-content-between">
                     <a href="{% url 'plants:detail' plant.pk %}" class="btn btn-sm btn-primary">Подробнее</a>
                     <div>

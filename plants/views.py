@@ -1,13 +1,16 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.db.models import Prefetch
 from .models import Plant, CareLog, Reminder, PlantPhoto
 from .forms import PlantForm, CareLogForm, ReminderForm
 
 
 @login_required
 def plant_list(request):
-    plants = Plant.objects.filter(user=request.user)
+    plants = Plant.objects.filter(user=request.user).prefetch_related(
+        Prefetch('photos', queryset=PlantPhoto.objects.order_by('-is_main', 'order'))
+    )
     return render(request, 'plants/list.html', {'plants': plants})
 
 
